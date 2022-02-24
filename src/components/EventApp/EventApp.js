@@ -8,69 +8,59 @@ import EventDataRow from '../EventDataRow/EventDataRow';
 import EventTable from '../EventTable/EventTable';
 import Button from '../Button/Button';
 
-class EventApp extends React.Component {
-  state = {
-    dataCol: ['Event Name', 'Start Date', 'End Date', 'Actions'],
-    isShowAddEventRow: false,
-    newEvent: new EventData('', '' + Date.now(), '' + Date.now()),
+const EventApp=(props)=> {
+  let [dataCol]=React.useState(['Event Name', 'Start Date', 'End Date', 'Actions']);
+  let [isShowAddEventRow, setIsShowAddEventRow] = React.useState(false);
+  let [newEventRow, setNewEventRow] = React.useState(new EventData('', '' + Date.now(), '' + Date.now()));
+
+  const hanldeAddEvent = () => {
+    setIsShowAddEventRow(true);
+  };
+  const hanldeOnChange = (newEvent) => {
+    setNewEventRow(newEvent);
   };
 
-  hanldeAddEvent = () => {
-    this.setState({
-      isShowAddEventRow: true,
-    });
-  };
-  hanldeOnChange = (newEvent) => {
-    this.setState({
-      newEvent: {
-        ...newEvent,
-      },
-    });
+  const handleCloseAddNew = () => {
+    setIsShowAddEventRow(false);
+    setNewEventRow(new EventData('', '' + Date.now(), '' + Date.now()));
   };
 
-  handleCloseAddNew = () => {
-    this.setState({
-      isShowAddEventRow: false,
-      newEvent: new EventData('', '' + Date.now(), '' + Date.now()),
-    });
-  };
-
-  hanldeSaveAddNew = () => {
-    const { eventName, startDate, endDate } = this.state.newEvent;
+  const hanldeSaveAddNew = () => {
+    const { eventName, startDate, endDate } = newEventRow;
     const newEvent = new EventData(eventName, startDate, endDate);
     newEvent.parseTimeStamp();
     if (newEvent.isValidForSave()) {
-      this.props.handleAddEvent(newEvent).then((data) => {
-        this.handleCloseAddNew();
+      hanldeAddEvent(newEvent).then((data) => {
+        handleCloseAddNew();
       });
     } else {
       alert('inValid');
     }
   };
 
-  handleEditSave = (editEventObj) => {
-    this.props.handleUpdateEvent(editEventObj).then((data) => {
-      this.props.handleSetEdit(editEventObj, false);
+  const handleEditSave = (editEventObj) => {
+    props.handleUpdateEvent(editEventObj).then((data) => {
+      props.handleSetEdit(editEventObj, false);
     });
   };
 
-  renderHeader = () => <Button onClick={this.hanldeAddEvent}>Add Event</Button>;
-  renderFooter = () => {
-    if (this.state.isShowAddEventRow) {
+  const renderHeader = () => <Button onClick={hanldeAddEvent}>Add Event</Button>;
+  const renderFooter = () => {
+    if (isShowAddEventRow) {
       return (
         <EventDataRow
-          event={this.state.newEvent}
+          event={newEventRow}
           actions={[
             {
               actionName: 'Save',
-              actionFn: this.hanldeSaveAddNew,
+              actionFn: hanldeSaveAddNew,
             },
             {
               actionName: 'Close',
-              actionFn: this.handleCloseAddNew,
+              actionFn: handleCloseAddNew,
             },
           ]}
-          handleOnchange={this.hanldeOnChange}
+          handleOnchange={hanldeOnChange}
         ></EventDataRow>
       );
     } else {
@@ -78,24 +68,17 @@ class EventApp extends React.Component {
     }
   };
 
-  componentWillUnmount() {
-    console.log('EVENTAPP componentWillUnmount ');
-  }
-
-  render() {
-    console.log('render Event App');
-
     const {
       events,
       handleOnChangeEditEvent,
       handleDeleteEvent,
       handleSetEdit,
-    } = this.props;
+    } = props;
     return (
       <EventTable
-        dataCol={this.state.dataCol}
-        renderFooter={this.renderFooter}
-        renderHeader={this.renderHeader}
+        dataCol={dataCol}
+        renderFooter={renderFooter}
+        renderHeader={renderHeader}
       >
         {events?.map((event) =>
           event.isEditing ? (
@@ -105,7 +88,7 @@ class EventApp extends React.Component {
               actions={[
                 {
                   actionName: 'Save',
-                  actionFn: this.handleEditSave,
+                  actionFn: handleEditSave,
                 },
                 {
                   actionName: 'Cancel',
@@ -134,7 +117,6 @@ class EventApp extends React.Component {
       </EventTable>
     );
   }
-}
 
 const EventManger = withEventData(EventApp);
 
