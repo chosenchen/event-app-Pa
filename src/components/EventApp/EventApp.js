@@ -7,11 +7,22 @@ import { EventData } from '../../models/EventData';
 import EventDataRow from '../EventDataRow/EventDataRow';
 import EventTable from '../EventTable/EventTable';
 import Button from '../Button/Button';
+import { useEventData } from '../../hooks/useEventData';
 
 const EventApp=(props)=> {
-  let [dataCol]=React.useState(['Event Name', 'Start Date', 'End Date', 'Actions']);
-  let [isShowAddEventRow, setIsShowAddEventRow] = React.useState(false);
-  let [newEventRow, setNewEventRow] = React.useState(new EventData('', '' + Date.now(), '' + Date.now()));
+  const [dataCol]=React.useState(['Event Name', 'Start Date', 'End Date', 'Actions']);
+  const [isShowAddEventRow, setIsShowAddEventRow] = React.useState(false);
+  const [newEventRow, setNewEventRow] = React.useState(new EventData('', '' + Date.now(), '' + Date.now()));
+
+  const [
+    events,
+    handleUpdateEvent,
+    handleDeleteEvent,
+    handleAddEvent,
+    handleSetEdit,
+    handleOnChangeEditEvent,
+  ] = useEventData();
+  console.log(events);
 
   const hanldeAddEvent = () => {
     setIsShowAddEventRow(true);
@@ -30,7 +41,7 @@ const EventApp=(props)=> {
     const newEvent = new EventData(eventName, startDate, endDate);
     newEvent.parseTimeStamp();
     if (newEvent.isValidForSave()) {
-      hanldeAddEvent(newEvent).then((data) => {
+      handleAddEvent(newEvent).then((data) => {
         handleCloseAddNew();
       });
     } else {
@@ -39,8 +50,8 @@ const EventApp=(props)=> {
   };
 
   const handleEditSave = (editEventObj) => {
-    props.handleUpdateEvent(editEventObj).then((data) => {
-      props.handleSetEdit(editEventObj, false);
+    handleUpdateEvent(editEventObj).then((data) => {
+      handleSetEdit(editEventObj, false);
     });
   };
 
@@ -68,12 +79,6 @@ const EventApp=(props)=> {
     }
   };
 
-    const {
-      events,
-      handleOnChangeEditEvent,
-      handleDeleteEvent,
-      handleSetEdit,
-    } = props;
     return (
       <EventTable
         dataCol={dataCol}
@@ -118,6 +123,6 @@ const EventApp=(props)=> {
     );
   }
 
-const EventManger = withEventData(EventApp);
+// const EventManger = withEventData(EventApp);
 
-export default EventManger;
+export default EventApp;

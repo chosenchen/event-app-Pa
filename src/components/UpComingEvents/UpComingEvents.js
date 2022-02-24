@@ -1,17 +1,19 @@
 import React from 'react';
 import { withEventData } from '../../hoc/withEventData';
+import { useEventData } from '../../hooks/useEventData';
 
 import EventDataRow from '../EventDataRow/EventDataRow';
 import EventTable from '../EventTable/EventTable';
 import WithEventData from '../WithEventData/WithEventData';
-const UpComingEvent=(props)=> {
-  let [dataCol, setDataCol] = React.useState(['Event Name', 'Start Date', 'End Date']);
+const UpComingEvent=({events})=> {
+  const [dataCol, setDataCol] = React.useState(['Event Name', 'Start Date', 'End Date']);
+
+  console.log(events);
 
   const renderHeader = () => {
     return <h5>UpComingEvent</h5>;
   };
 
-    const { events } = props;
     return (
       <EventTable renderHeader={renderHeader} dataCol={dataCol}>
         {events

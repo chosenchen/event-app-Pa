@@ -41,6 +41,7 @@ export default class WithEventData extends React.Component {
       this.setState({
         events,
       });
+      console.log(events);
     });
   };
   // API CALL
