@@ -4,7 +4,6 @@ import './Button.css';
 // PureComponent
 class Button extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
-    console.log('e');
     return nextProps.children !== this.props.children;
   }
   render() {

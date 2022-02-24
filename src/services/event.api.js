@@ -1,4 +1,4 @@
-const baseURL = 'http://localhost:3000';
+const baseURL = 'http://localhost:9000';
 const path = 'events';
 
 export const getAllEvents = () => {
